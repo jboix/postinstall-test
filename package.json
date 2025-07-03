@@ -1,0 +1,21 @@
+{
+  "name": "@jboix/postinstall-test",
+  "version": "1.0.0",
+  "description": "A small test package for npm postinstall script",
+  "scripts": {
+    "postinstall": "node postinstall.js"
+  },
+  "files": [
+    "postinstall.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jboix/postinstall-test.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}
+
