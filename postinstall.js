@@ -1,45 +1,20 @@
-const { exec } = require('child_process');
-const path = require('path');
-const fs = require('fs');
+const RECOMMENDED_VERSION = '8.21.0';
 
-// Skip if not inside node_modules (i.e., we're developing the package)
-if (!__dirname.includes('node_modules')) {
-    console.log('⏩ postinstall skipped (development mode)');
-    process.exit(0);
-}
+function checkVideoJs() {
+    try {
+        const videojsPkg = require('video.js/package.json');
+        const installedVersion = videojsPkg.version;
 
-// Detect package manager
-const userAgent = process.env.npm_config_user_agent || '';
-let installCmd;
-
-if (userAgent.includes('pnpm')) {
-    installCmd = 'pnpm add video.js@8.21.0';
-} else if (userAgent.includes('yarn')) {
-    installCmd = 'yarn add video.js@8.21.0';
-} else {
-    installCmd = 'npm install video.js@8.21.0 --save';
-}
-
-// Parent project root
-const projectRoot = path.resolve(__dirname, '..', '..');
-
-// Confirm we’re in a real project
-if (!fs.existsSync(path.join(projectRoot, 'package.json'))) {
-    console.error('❌ Could not find parent project package.json — aborting.');
-    process.exit(1);
-}
-
-console.log(`📦 Detected package manager: ${installCmd.split(' ')[0]}`);
-console.log(`📥 Installing video.js@8.21.0 in parent project...`);
-
-exec(installCmd, { cwd: projectRoot }, (error, stdout, stderr) => {
-    if (error) {
-        console.error(`❌ Error installing video.js: ${error.message}`);
-        process.exit(1);
+        if (installedVersion !== RECOMMENDED_VERSION) {
+            console.warn(`[pillarbox-web] WARNING: video.js version ${installedVersion} detected.`);
+            console.warn(`[pillarbox-web] Recommended version is ${RECOMMENDED_VERSION} or higher in patch version.`);
+            console.warn('[pillarbox-web] Please verify compatibility.');
+        }
+    } catch (e) {
+        console.warn('[pillarbox-web] WARNING: video.js is not installed!');
+        console.warn(`[pillarbox-web] Please install video.js@${RECOMMENDED_VERSION} as a peer dependency.`);
+        console.warn(`[pillarbox-web] Run: npm install video.js@${RECOMMENDED_VERSION} --save`);
     }
-    if (stderr) {
-        console.error(`⚠️ stderr: ${stderr}`);
-    }
-    console.log(stdout);
-    console.log('✅ video.js@8.21.0 installed successfully in parent project.');
-});
+}
+
+checkVideoJs();
